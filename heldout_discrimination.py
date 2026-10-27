@@ -105,7 +105,9 @@ class CachedSlice:
                 rhs=transformed[...,iy,ix][self.mask]
                 if max(abs(rhs))<threshold:
                     continue
-                solved=self.factor(iy,ix).solve(-rhs/(4*self.jac))
+                arg=-rhs/(4*self.jac)
+                lu=self.factor(iy,ix)
+                solved=lu.solve(arg.real)+1j*lu.solve(arg.imag)
                 result[...,iy,ix][self.mask]=solved
         u=np.fft.ifft2(result,axes=(-2,-1)).real
         w=np.zeros_like(self.W.real)
