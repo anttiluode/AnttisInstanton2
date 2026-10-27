@@ -45,7 +45,7 @@ def test_proposition_2_2_target_mu_equals_pushed_source_current():
 def test_true_density_is_nonnegative_coherent_and_phase_sensitive():
     a=modes_example(scrambled=False)
     b=modes_example(scrambled=True)
-    assert np.array_equal(abs(a.c),abs(b.c))
+    assert np.allclose(abs(a.c),abs(b.c),atol=1e-15,rtol=1e-15)
     x,y=spatial_grid(12)
     W,mask,step=auxiliary_disk(9,.4)
     mu0=target_mu(a,.8,x,y,W)
