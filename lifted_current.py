@@ -104,7 +104,7 @@ def source_current(modes, variables):
     damp=np.exp(-0.5*modes.kappa*((w11-v*w10)**2+(w21-v*w20)**2))
     u=modes.c*np.exp(1j*modes.kappa*(s0+v*x-0.5*v*v*t))
     amp=np.sqrt(modes.kappa)*damp*u
-    G=np.array([amp.sum(),(amp*v).sum()])
+    G=np.conj(np.array([amp.sum(),(amp*v).sum()]))  # Z_l uses conjugate G (Lemma 2.1)
     B=np.zeros((7,7),dtype=float)
     for l in (0,1):
         z=np.zeros(7,dtype=complex)
