@@ -14,6 +14,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -r requirements-dev.txt
       - run: python -m pytest -q
+      - run: python real_paper_instanton.py --grid 32 --disk 5 --caps 2 --frames 3 --max-lag 3 --output /tmp/two-centers-smoke
       - run: python heldout_discrimination.py --cases 24 --n 18 --disk 9 --bootstrap 100 --output /tmp/heldout-smoke
       - run: python heldout_discrimination.py --cases 256 --n 18 --disk 9 --bootstrap 1000 --output /tmp/heldout-full
       - run: python -m py_compile lifted_current.py nonlinear_bridge.py
