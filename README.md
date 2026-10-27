@@ -100,3 +100,63 @@ Outputs in `results/`: `paper_instanton.png` (six-panel figure), `observations.c
 Experimental numerical instrument. No claimed new particle, instanton solution, conserved current for the nonlinear model, or improved prediction of physical jumps. The OpenAI paper is the mathematical source; this repository tests whether the source's mechanisms are informative on Antti's model.
 
 Original concept: Antti Luode. Paper: OpenAI (2026). See the license in this repository.
+
+
+## The paper's conserved current — new reference experiment
+
+The original live viewer is unchanged. The following programs are **a new, more faithful construction from the paper**, rather than just a directionally weighted FFT.
+
+### What is implemented
+
+**Lemma 2.1 (source current).** In a free wave's null coordinates, we construct
+\[
+B=\operatorname{Re}\sum_{\ell=1}^2 Z_\ell\otimes\overline{Z_\ell}
+\]
+at each lifted point \((t,x,s_0,w_{10},w_{11},w_{20},w_{21})\). The code checks positivity using eigenvalues and checks \(\sum_I\partial_I B_{IJ}=0\) by centered finite differences. Importantly, the coefficient vector fields use the **conjugated continued system field** as in Lemma 2.1. The actual conservation check caught and corrected an initial conjugation error.
+
+**Proposition 2.2 (target wave density).** Rather than inventing a disk source, we use the paper's actual coherent time density from (2.15):
+\[
+\mu=A^0_{TT}=\left|\sum_{\kappa,v}b_0(W,v)m_{\kappa,v}u_{\kappa,v}\right|^2+
+\left|\sum_{\kappa,v}b_1(W,v)m_{\kappa,v}u_{\kappa,v}\right|^2.
+\]
+For \(n=2\), \(W=w_a+kw_b\), \(Y\ne0\),
+\(m_{\kappa,v}=(\kappa/|Y|)^{1/2}\exp[-\kappa|Y||W-v|^2/2]\),
+\(b_0=(1+w_av/2)/\sqrt2\), and \(b_1=w_bv/(2\sqrt2)\).
+The test suite verifies that the time density also equals the **pushforward of the source current**, using the paper's exact real Jacobian \(J=4|R|^4\) on a real chart.
+
+**Appendix D, Eq. (D.1).** Fix \((T,\tau,\Phi)\). At each physical spatial Fourier mode \(k\), solve the planar **variable-coefficient** fiber problem
+\[
+[\Delta_W - |k\cdot e(W)|^2/|J(W)|^2]\widehat u
+=\widehat\mu/(4|J(W)|^2),\qquad \widehat u|_{\partial\mathbb D}=0.
+\]
+Both \(e(W)\) and \(J(W)\) follow the actual chart:
+\(Y=(\Phi+\sqrt2\tau)/(1+W^2/2)\),
+\(J=(1+W^2/2)/(\sqrt2Y)\),
+\(e=((1-W^2/2)/\sqrt2,-W)\).
+The source \(\mu\) is the wave-derived \(A^0_{TT}\), evaluated at the same \(W\), not a hand-made Gaussian.
+
+### How to run
+
+```powershell
+# Free-wave reference: equal spectral power, different phases.
+# Compare genuine wave-derived auxiliary response, L4, and physical energy.
+python lifted_current.py
+# Faster diagnostic:
+python lifted_current.py --n 12 --disk 9 --samples 3
+
+# Original nonlinear field unchanged, with a per-snapshot
+# positive-frequency free-wave projection from BOTH phi and phi_t:
+python nonlinear_bridge.py
+# Faster:
+python nonlinear_bridge.py --steps 1200 --every 300
+```
+
+The first produces `results/paper_lifted/{time_series.csv,wave_and_disk.png,comparison_curves.png}`. The second produces `results/bridge/{nonlinear_reference.csv,nonlinear_paper_bridge.png}`. All figures and values are generated reproducibly by the script; no hand-authored data.
+
+### What is and isn't claimed
+
+- These are **genuine formulas from the paper** applied to an exact, finite superposition of *free* Euclidean half-waves, plus a finite-difference approximation to one fixed-\(\Phi\) auxiliary disk problem.
+- The plotted \(\tfrac12\int(-u)\mu|J|^{-2}\,dW\,dX\) is a **single \(\Phi\) slice**, not the paper's full \(F_{\mathrm{pl}}\). We have not integrated the passive direction \(\Phi\), performed its cutoff/mollification, calculated parameter-time boundary fluxes, or proved its two-circle inequality.
+- The bridge to Antti's nonlinear \(\phi^4\) **reconstructs a NEW FREE reference** at each snapshot from \(\phi\) **and** \(\phi_t\) using the positive-frequency formula. No claim of conservation across reconstructed snapshots, no nonlinear analytic continuation, and no theorem transferred to \(\phi^4\).
+- Free-wave physical energy is a mandatory control. Ordinary \(\int |u|^4\), intensity contrast and an identical-spectrum phase-scramble arm are also reported. Phase sensitivity alone is already known; it is **not a discovery**.
+- All reported concentration metrics depend on the chosen wave cap, auxiliary radius, aperture, and normalization. Establishing an incremental predictive advantage beyond simple wave L4 and phase-coherence controls remains **unproven**.
