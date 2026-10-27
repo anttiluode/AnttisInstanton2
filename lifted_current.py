@@ -181,17 +181,19 @@ def target_mu(modes,T,x,b,W,tau=.35,Phi=0.0):
 
 
 def source_to_target_mu_identity(modes,T,x,b,Y,W):
-    """Validate A^0_TT by explicit source-current pushforward at REAL Y,W.
+    """Compute A^0_TT by an independent source-coordinate pushforward.
 
-    Follows (2.8)-(2.11), not a fit or an independent filter.
-    J=4|R|^4. At Y>0 and W real, choose R=sqrt(Y), zeta=RW.
+    Uses the entire COMPLEX auxiliary chart, not only real W: pick
+    R=sqrt(Y), zeta=R*W, and split their real/imaginary parts between
+    w1 and w2 (the paper's auxiliary imaginary unit k). J=4|R|^4.
+    Target time T is unchanged by the auxiliary coordinate map.
     """
-    if Y<=0 or not np.isreal(W):
-        raise ValueError("This source chart identity is for Y>0, W real")
-    R=np.sqrt(Y); w=float(np.real(W))
+    if abs(Y)<=1e-12:
+        raise ValueError("Y=0 is a singular chart")
+    R=np.sqrt(complex(Y)); zeta=R*complex(W)
     t=(T+b)/np.sqrt(2); s0=(b-T)/np.sqrt(2)
-    B=source_current(modes,[t,x,s0,R,R*w,0,0])
-    jac=4*R**4
+    B=source_current(modes,[t,x,s0,R.real,zeta.real,R.imag,zeta.imag])
+    jac=4*abs(R)**4
     ct=np.array([1/np.sqrt(2),0,-1/np.sqrt(2),0,0,0,0])
     return float(ct@B@ct/jac)
 
