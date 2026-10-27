@@ -1,0 +1,18 @@
+name: Paper-first numerical checks
+on:
+  push:
+    branches: ["main", "paper-first-instanton-lab"]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+      - run: python paper_instanton.py --mode paper --grid 48 --output /tmp/paper-first-smoke
+      - run: python paper_instanton.py --mode instanton --grid 48 --steps 60 --sample-every 20 --output /tmp/instanton-smoke
