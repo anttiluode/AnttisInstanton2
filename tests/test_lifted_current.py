@@ -28,18 +28,17 @@ def test_current_is_positive_semidefinite_and_columnwise_divergence_free():
 def test_proposition_2_2_target_mu_equals_pushed_source_current():
     modes=modes_example()
     T,x,b=.18,1.3,2.7
-    y=.46
-    w=.12
     xgrid=np.array([[x]])
     bgrid=np.array([[b]])
-    # target_mu obtains Y through the fixed-Phi chart; choose Phi to
-    # force Y=y when W=w and tau is real.
     tau=.35
-    phi=y*(1+w*w/2)-np.sqrt(2)*tau
-    val=float(target_mu(modes,T,xgrid,bgrid,np.array([[w+0j]]),
-                        tau=tau,Phi=phi)[0,0,0,0])
-    pushed=source_to_target_mu_identity(modes,T,x,b,y,w)
-    assert val==pytest.approx(pushed,rel=1e-11,abs=1e-12)
+    # Test the genuine two-flow chart, including nonzero imaginary W.
+    for w in (0.12+0j,0.12+0.19j,-0.23-0.11j):
+        phi=0.06
+        Y=(phi+np.sqrt(2)*tau)/(1+w*w/2)
+        val=float(target_mu(modes,T,xgrid,bgrid,np.array([[w]]),
+                            tau=tau,Phi=phi)[0,0,0,0])
+        pushed=source_to_target_mu_identity(modes,T,x,b,Y,w)
+        assert val==pytest.approx(pushed,rel=1e-11,abs=1e-12)
 
 
 def test_true_density_is_nonnegative_coherent_and_phase_sensitive():
