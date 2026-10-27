@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -336,6 +337,23 @@ def experiment(*,n=18,nw=13,samples=9,out="results/paper_lifted",
             ax.legend()
     fig.savefig(folder/"comparison_curves.png",dpi=140)
     plt.close(fig)
+    # Explicit negative-result control: is this just a rescaled L4 measure?
+    disk=np.array([r["disk_response_slice"] for r in records],dtype=float)
+    l4=np.array([r["wave_L4"] for r in records],dtype=float)
+    ratios=disk/np.maximum(l4,1e-30)
+    corr=float(np.corrcoef(disk,l4)[0,1]) if np.std(l4)>1e-12 and np.std(disk)>1e-12 else float("nan")
+    metrics=dict(
+        paper_disk_to_ordinary_L4_pearson=corr,
+        disk_over_L4_mean=float(np.mean(ratios)),
+        disk_over_L4_relative_std=float(np.std(ratios)/max(np.mean(ratios),1e-30)),
+        cases=["coherent","scrambled"],
+        number_of_points=len(records),
+        warning="Descriptive only: same simulated trajectory/case pair; not held-out prediction.",
+    )
+    with (folder/"comparison_metrics.json").open("w") as stream:
+        json.dump(metrics,stream,indent=2,allow_nan=False)
+    print(f"Matched ordinary L4 control: corr={corr:.5f}; "
+          f"relative ratio std={metrics['disk_over_L4_relative_std']:.5f}")
     max_diff=max(abs(r["physical_energy"]-records[0]["physical_energy"])
                  for r in records if r["case"]=="coherent")
     print(f"Lifted-current experiment: {len(records)} observations, "
