@@ -151,7 +151,7 @@ python nonlinear_bridge.py
 python nonlinear_bridge.py --steps 1200 --every 300
 ```
 
-The first produces `results/paper_lifted/{time_series.csv,wave_and_disk.png,comparison_curves.png}`. The second produces `results/bridge/{nonlinear_reference.csv,nonlinear_paper_bridge.png}`. All figures and values are generated reproducibly by the script; no hand-authored data.
+The first produces `results/paper_lifted/{time_series.csv,wave_and_disk.png,comparison_curves.png,comparison_metrics.json}`. The second produces `results/bridge/{nonlinear_reference.csv,nonlinear_paper_bridge.png}`. All figures and values are generated reproducibly by the script; no hand-authored data.
 
 ### What is and isn't claimed
 
