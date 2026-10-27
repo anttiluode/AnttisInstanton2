@@ -95,3 +95,4 @@ def test_smoke_writes_paper_figures_csv(tmp_path):
     assert (tmp_path/"time_series.csv").is_file()
     assert (tmp_path/"comparison_curves.png").is_file()
     assert (tmp_path/"wave_and_disk.png").is_file()
+    assert (tmp_path/"comparison_metrics.json").is_file()
