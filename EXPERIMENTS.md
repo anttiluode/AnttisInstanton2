@@ -39,3 +39,38 @@ The bridge successfully generated three sample snapshots of the unchanged origin
 4. A proof or verified numerical balance law for the full auxiliary-tensor field in the nonlinear \(\phi^4\) PDE. None is claimed.
 
 **Kill condition:** If the fully coupled auxiliary quantity continues to be an almost fixed rescaling of \(L^4\) over independent waves and cannot improve held-out prediction beyond conventional controls, report that the paper gives a useful rigorous reference but no new diagnostic power for Antti's Instanton.
+
+
+## 2026-10-27: larger held-out wave-discrimination experiment (256 independent waves)
+
+**Question:** Does the implemented true lifted wave-current density plus Appendix D fixed-\(\Phi\) slice offer predictive information beyond ordinary scalar wave concentration, energy flux, and phase summaries?
+
+Run with the fixed, committed protocol:
+
+```powershell
+python heldout_discrimination.py --cases 256 --n 18 --disk 9 --bootstrap 1000
+```
+
+[Verified GitHub Actions run](https://github.com/anttiluode/AnttisInstanton2/actions/runs/40538711838). All 24 tests passed and both the 24-wave smoke and 256-wave full benchmark completed. The experiment is deterministic: RNG seeds 1401 for wave generation and 771 for holdout split, 166 independent training waves and 90 held-out independent test waves, 4 predeclared phase families. Modes have the same spectral powers across *every* wave; physical wave energy varies by at most \(5.68\times10^{-14}\) numerically.
+
+**Primary target:** \(\log \int |u(T+0.85,X)|^4\,dX\), using measurements at \(T=0\) only.
+
+| Train-fitted feature set | Held-out RMSE | Held-out R² |
+|---|---:|---:|
+| Sample-mean predictor | 0.380119 | -0.012243 |
+| Ordinary \(L^4(T=0)\) only | 0.058256 | 0.976225 |
+| Ordinary controls (\(L^4\), peak contrast, RMS/peak energy flux, two phase-locking summaries) | **0.040245** | **0.988653** |
+| Ordinary controls + genuine paper-derived auxiliary slice response | 0.040435 | 0.988546 |
+| Paper-derived auxiliary slice response alone | 0.058355 | 0.976144 |
+
+Primary paired held-out test: baseline squared error **minus** augmented squared error \(=-1.529\times10^{-5}\); paired bootstrap 95% interval \([-3.462\times10^{-5},\, 6.702\times10^{-6}]\). **No demonstrated improvement.**
+
+**Secondary target:** log future peak-to-mean physical intensity contrast. Ordinary RMSE 0.043420, ordinary+paper 0.043346. Difference in mean squared errors \(=+6.361\times10^{-6}\), bootstrap 95% interval \([-2.169\times10^{-5},\,3.488\times10^{-5}]\). Also **inconclusive**.
+
+**Redundancy control:** Across the 256 independently generated waves, the paper's fixed-\(\Phi\) disk response correlates with ordinary *present* \(L^4\) at **0.999714**. Relative coefficient of variation of disk/L4 is **0.01216**. Among **602** same-power pairs whose present L4 values differ by at most 1%, the implementation also explicitly measures how much auxiliary response changes; see `results/heldout/heldout_metrics.json` for full, reproducible pair statistics. These pairs can establish some mathematical non-equivalence; they do *not* by themselves establish predictive advantage.
+
+**Outcome:** We built the positive conserved source tensor from Lemma 2.1, validated its divergence numerically, used the paper's actual \(A^0_{TT}\) from Proposition 2.2, and solved the variable-coefficient Appendix D fiber problem. Under this benchmark, that specific *single-slice derived scalar* is close to rescaled ordinary \(L^4\) and has **no reliable held-out predictive advantage** over the listed ordinary controls.
+
+**Scope limitations:** The simulated source is a **free wave**, not the nonlinear Instanton; fixed-\(\Phi\) auxiliary slice is **not** the paper's full \(F_{\rm pl}\), and the two-circle maximum-principle argument is not reproduced. The same fixed Fourier powers and intentionally structured phase families constrain the result. Positive discrimination in other ensembles is not excluded. Neither method can add information beyond the full wave coefficients; the meaningful question is whether compact derived observables outperform compact conventional ones, under fair controls.
+
+**Next gate:** Unless a more faithful fiber integration or a carefully motivated independent system produces an improvement against ordinary \(L^4\), flux and phase statistics, this paper-to-Instanton **discriminative-observer hypothesis should be regarded as unsupported**, not as a discovery.

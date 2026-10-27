@@ -160,3 +160,26 @@ The first produces `results/paper_lifted/{time_series.csv,wave_and_disk.png,comp
 - The bridge to Antti's nonlinear \(\phi^4\) **reconstructs a NEW FREE reference** at each snapshot from \(\phi\) **and** \(\phi_t\) using the positive-frequency formula. No claim of conservation across reconstructed snapshots, no nonlinear analytic continuation, and no theorem transferred to \(\phi^4\).
 - Free-wave physical energy is a mandatory control. Ordinary \(\int |u|^4\), intensity contrast and an identical-spectrum phase-scramble arm are also reported. Phase sensitivity alone is already known; it is **not a discovery**.
 - All reported concentration metrics depend on the chosen wave cap, auxiliary radius, aperture, and normalization. Establishing an incremental predictive advantage beyond simple wave L4 and phase-coherence controls remains **unproven**.
+
+
+## Held-out discrimination benchmark: can the paper add predictive power?
+
+```powershell
+# 256 independently generated free waves, exact same modal power in every case
+python heldout_discrimination.py
+
+# Fast reproducibility check
+python heldout_discrimination.py --cases 24 --bootstrap 100
+```
+
+This is the first properly held-out comparison, not a two-snapshot illustration. At physical time `T=0` the benchmark measures (a) the **actual Proposition 2.2 time density** sent through the **variable-coefficient Appendix D disk solver**, and (b) ordinary \(L^4\), intensity contrast, energy-flux RMS and peak, and two phase-locking statistics. There is **no nonlinear physics** in this particular benchmark; each realization is a known, free positive-frequency wave.
+
+The waves share *identical spectral magnitudes and physical energy* but have independent phases. Four predeclared wave families include random phases, engineered future focus with phase jitter, engineered past focus, and mixed focus. Data are split by **independent wave realization**, not by frame. The benchmark uses the same fixed ridge regression and train-only standardization for baseline and baseline+paper models. The primary target is *future \(L^4\)*; the second target is future **peak/mean intensity contrast** at the same horizon. Paired bootstrap intervals are reported for the change in held-out squared error. A special control examines all pairs with nearly equal present \(L^4\) and compares their auxiliary response.
+
+The disk solver caches numerical LU factors and is independently checked against the slower original Appendix D solver. The output includes:
+- `results/heldout/heldout_metrics.json`: model scores, uncertainty intervals, pair statistics, negative-result verdict
+- `results/heldout/independent_waves.csv`: phase-family label, ordinary features, paper feature, outcome and train/test split
+- `results/heldout/paper_vs_L4.png`, `heldout_predictions.png`: visual comparisons
+
+**Limits:** The paper's \(F_{\rm pl}\) integrates an entire spatial fiber with passive-coordinate cutoff, not just our fixed-\(\Phi\) slice. The benchmark measures the implemented slice and cannot claim all of the manuscript's proof machinery. Even a positive held-out gain would establish *incremental predictive value conditional on these selected baseline summaries*, not any information beyond the full wave state; an appropriately complete conventional observer has all the same input information. Forecasting actual nonlinear domain-wall behavior remains a separate task.
+
