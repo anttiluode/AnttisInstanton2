@@ -199,7 +199,7 @@ def ridge_predict(train,test,y_train,columns,alpha=1.0):
     return y_train.mean()+Z@model
 
 
-def evaluate(rows,test_fraction=.35,seed=771,bootstrap=500):
+def evaluate(rows,test_fraction=.35,seed=771,bootstrap=500,target_key="future_l4"):
     if len(rows)<20:
         raise ValueError("At least 20 independent wave realizations required")
     rng=np.random.default_rng(seed)
@@ -210,7 +210,9 @@ def evaluate(rows,test_fraction=.35,seed=771,bootstrap=500):
     train_idx=np.sort(indices[ntest:])
     fields=list(ORDINARY)+["disk"]
     X=np.array([[r[k] for k in fields] for r in rows])
-    y=np.log(np.array([r["future_l4"] for r in rows]))
+    if target_key not in ("future_l4", "future_contrast"):
+        raise ValueError("Unsupported held-out target")
+    y=np.log(np.array([r[target_key] for r in rows]))
     tr,te=X[train_idx],X[test_idx]
     yt,yv=y[train_idx],y[test_idx]
     configs={
@@ -243,7 +245,8 @@ def evaluate(rows,test_fraction=.35,seed=771,bootstrap=500):
         row["split"]="test" if i in set(test_idx) else "train"
     return dict(
        seed=seed,examples=len(rows),train=int(len(train_idx)),test=int(len(test_idx)),
-       future_target="log spatial integral |u(t+lag)|^4",
+       future_target=("log spatial integral |u(t+lag)|^4" if target_key=="future_l4"
+                      else "log peak/mean |u(t+lag)|^2"),
        models=models,
        paper_mse_increment_positive_means_better=float(improvement.mean()),
        mse_increment_bootstrap95=list(map(float,intervals)),
@@ -254,7 +257,7 @@ def evaluate(rows,test_fraction=.35,seed=771,bootstrap=500):
        paper_to_L4_ratio_cv=float(
            np.std([r["disk"]/r["l4_now"] for r in rows])/
            np.mean([r["disk"]/r["l4_now"] for r in rows])),
-       test_truth_log_future_L4=list(map(float,yv)),
+       test_truth_log_future_target=list(map(float,yv)),
        test_prediction_ordinary=list(map(float,predictions["ordinary_controls"])),
        test_prediction_with_paper=list(map(float,predictions["ordinary_plus_paper"])),
        test_indices=list(map(int,test_idx)),
@@ -306,6 +309,8 @@ def run(cases=128,n=18,disk=9,lag=.85,seed=1401,output="results/heldout",bootstr
                     future_contrast=later["contrast_now"])
         records.append(record)
     metrics=evaluate(records,bootstrap=bootstrap)
+    metrics["secondary_future_peak_contrast"]=evaluate(
+        records,bootstrap=bootstrap,target_key="future_contrast")
     pairs=matched_pairs(records)
     metrics["matched_L4_pairs"]=pairs
     metrics["design"]={
@@ -348,6 +353,16 @@ def run(cases=128,n=18,disk=9,lag=.85,seed=1401,output="results/heldout",bootstr
         print(f"  {name}: RMSE={scores['rmse']:.6f} R2={scores['r2']:.6f}")
     print(f"Paper incremental MSE benefit={metrics['paper_mse_increment_positive_means_better']:.7g}; "
           f"bootstrap95={metrics['mse_increment_bootstrap95']}")
+    secondary=metrics["secondary_future_peak_contrast"]
+    print("Secondary target: future peak / mean contrast")
+    print("  ordinary RMSE="
+          f"{secondary['models']['ordinary_controls']['rmse']:.6f}; "
+          "ordinary+paper RMSE="
+          f"{secondary['models']['ordinary_plus_paper']['rmse']:.6f}; "
+          "delta MSE="
+          f"{secondary['paper_mse_increment_positive_means_better']:.7g}; "
+          "bootstrap95="
+          f"{secondary['mse_increment_bootstrap95']}")
     print(f"Paper vs L4 corr={metrics['paper_to_L4_pearson']:.6f}, "
           f"ratio CV={metrics['paper_to_L4_ratio_cv']:.5f}, "
           f"matched L4 pairs={pairs['number_pairs']}")
