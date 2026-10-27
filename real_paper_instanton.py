@@ -213,7 +213,9 @@ def run_live(*,n=128,nw=7,caps=6,steps_per_frame=10,
         axs[2].set_ylim(-1.05,1.05)
         axs[2].set_title("Velocity lead/lag (positive = observer leads green)")
         axs[2].set_xlabel("Lag (frames)")
-        axs[2].legend(fontsize=7) if axs[2].lines else None
+        handles,labels=axs[2].get_legend_handles_labels()
+        if handles:
+            axs[2].legend(fontsize=7)
         fig.suptitle("Two centers: shared motion, separation and possible overshoot | "
                      "exploratory, not causality")
         return r
