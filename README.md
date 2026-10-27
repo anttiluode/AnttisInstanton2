@@ -55,7 +55,7 @@ The three distinguishable observers are (a) Antti's original positive-field CoM;
 ## Run
 
 Python 3.10+:
-\`\`\`bash
+```bash
 python -m pip install -r requirements.txt
 
 # Start HERE: paper-native free-wave calibration (engineered focus)
@@ -70,9 +70,9 @@ python paper_instanton.py --mode instanton --steps 1200 --show
 # See how rho and the ray direction change the angular cap
 python paper_instanton.py --mode paper --rho 8 --angle 1.0
 python -m pytest -q
-\`\`\`
+```
 
-Outputs in \`results/\`: \`paper_instanton.png\` (six-panel figure), \`observations.csv\` (timestamped measurements), \`auxiliary_disk_u.csv\` (verified frozen Appendix D solution). All plots can be generated headlessly.
+Outputs in `results/`: `paper_instanton.png` (six-panel figure), `observations.csv` (timestamped measurements), `auxiliary_disk_u.csv` (verified frozen Appendix D solution). All plots can be generated headlessly.
 
 ## Honest controls and what would count as progress
 
