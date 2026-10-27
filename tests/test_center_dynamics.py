@@ -53,6 +53,9 @@ def test_tracker_records_controls_and_writes_strict_json(tmp_path):
     assert rec["offset_x"]==pytest.approx(2)
     assert rec["offset_distance"]==pytest.approx(2)
     assert "gradient_x" in rec and "kinetic_x" in rec
+    assert rec["green_vx"]==pytest.approx(0)
+    assert rec["focus_vx"]==pytest.approx(0)
+    assert np.isnan(rec["offset_along_green_motion"])
     summary=tracker.write(tmp_path,max_lag=3)
     assert summary["samples"]==5
     assert (tmp_path/"centers.csv").exists()
