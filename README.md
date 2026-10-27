@@ -54,6 +54,15 @@ The three distinguishable observers are (a) Antti's original positive-field CoM;
 
 ## Run
 
+**Live physical field + adjustable paper-derived probe** (the closest experience to the original green-dot viewer):
+
+~~~bash
+python live_instanton.py
+~~~
+
+Move the rho, ray angle, annulus frequency and bandwidth sliders to see whether coherent concentration follows the original CoM or diverges from it. Use **Pause / run** and **Save CSV** in the interactive window. The right view is explicitly a frozen free-wave probe of the nonlinear snapshot, **not** the paper's lifted conserved current.
+
+
 Python 3.10+:
 ```bash
 python -m pip install -r requirements.txt
