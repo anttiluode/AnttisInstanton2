@@ -1,7 +1,7 @@
 name: Paper-first numerical checks
 on:
   push:
-    branches: ["main", "paper-first-instanton-lab"]
+    branches: ["main", "paper-first-instanton-lab", "full-lifted-current-planar-fiber"]
   pull_request:
 
 jobs:
