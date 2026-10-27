@@ -183,3 +183,63 @@ The disk solver caches numerical LU factors and is independently checked against
 
 **Limits:** The paper's \(F_{\rm pl}\) integrates an entire spatial fiber with passive-coordinate cutoff, not just our fixed-\(\Phi\) slice. The benchmark measures the implemented slice and cannot claim all of the manuscript's proof machinery. Even a positive held-out gain would establish *incremental predictive value conditional on these selected baseline summaries*, not any information beyond the full wave state; an appropriately complete conventional observer has all the same input information. Forecasting actual nonlinear domain-wall behavior remains a separate task.
 
+
+
+## New: live two-center motion and lead–lag experiment
+
+This experiment was motivated by the visual finding that **the magenta focus
+centroid and the green positive-field centroid sometimes meet, separate, and
+pass each other** in the nonlinear simulation. It tests that observation instead
+of assuming the two markers are interacting particles.
+
+```powershell
+# Interactive three-map viewer + a second row of live analysis plots:
+python real_paper_instanton.py
+
+# Headless, reproducible run; no GUI needed:
+python real_paper_instanton.py --frames 300 --steps-per-frame 10
+
+# Quick check:
+python real_paper_instanton.py --grid 48 --disk 7 --caps 4 --frames 20
+```
+
+The new viewer is based on the **Gemini-supplied** `real_paper_instanton.py`
+shown in our discussion, preserving its positive-frequency free-wave
+projection using *both* the field and its time derivative, coherent per-cap
+lifted densities, and accelerated approximate Appendix-D disk response.
+The *nonlinear* Antti \(\phi^4\) simulator stays unmodified.
+
+The second row now displays three diagnostics:
+
+1. **Four periodic X centers:** green positive field, magenta Appendix-D
+   response, ordinary \(|\nabla\phi|^2\), and ordinary \(\phi_t^2\).
+2. **Signed focus-minus-green separation** and shortest torus distance.
+   Crossing zero records a centroid crossing, *not proof of inertial overshoot*.
+3. **Velocity lead–lag correlations**, measured for the magenta map and for
+   both ordinary gradient and kinetic-energy controls. Positive lag means the
+   indicated observer's changes occur earlier than green changes.
+
+The original **Cartesian positive-field CoM is also saved** so it can be
+compared against earlier runs, but all displayed relative motion uses the
+*same periodic coordinate system*. The circular-centroid concentration
+provides a confidence criterion: when the distribution is too diffuse or the
+green positive mass vanishes, the position is undefined rather than guessed.
+Movement crossing a periodic boundary uses the shortest signed displacement.
+
+Use the **Pause** and **Save** buttons in the interactive window. Outputs:
+`results/center_dynamics/centers.csv`, `lead_lag.json`,
+and `center_dynamics.png`. JSON includes sample counts and a lead–lag
+curve for *each* of the three observers on both coordinate axes. For
+statistical claims, run multiple independent initial conditions with
+pre-registered lags and holdout runs; correlation on a single trajectory
+is exploratory and does not demonstrate prediction or causation.
+
+**Important scope:** The visible map is a *paper-inspired, frozen-screen
+approximation* rather than the exact Appendix-D variable-coefficient
+construction in `lifted_current.py`. Each cap sums its modes coherently
+before squaring, but the cap intensities are added and cross-cap
+interference is omitted. It should not be labeled the paper's full
+conserved nonlinear current or its integrated \(\mathcal F_{\mathrm{pl}}\).
+The 256-wave negative result elsewhere in the repository concerned a
+different, global free-wave prediction target and does not settle this
+spatial centroid experiment.
