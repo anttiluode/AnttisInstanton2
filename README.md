@@ -1,5 +1,7 @@
 # Antti's Instanton 2 — a paper-first wave laboratory
 
+![pic](pic.png)
+
 **Research anchor:** OpenAI, [*Local smoothing for the Euclidean wave equation*](https://github.com/openai/math/blob/main/preprints/Local-smoothing-for-the-Euclidean-wave-equation-October-25-2026/paper.pdf) (October 25, 2026). This repository is an **experiment built from two explicit constructions in the manuscript**, not a proof of the manuscript and not evidence that its theorem already applies to a nonlinear particle.
 
 ## The question
