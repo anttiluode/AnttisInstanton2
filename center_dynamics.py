@@ -126,6 +126,22 @@ class CenterTracker:
             rec["offset_distance"]=float(np.hypot(dx,dy))
         else:
             rec["offset_x"]=rec["offset_y"]=rec["offset_distance"]=float("nan")
+        previous=self.rows[-1] if self.rows else None
+        delta_t=(rec["time"]-previous["time"]) if previous else float("nan")
+        for name in self.names:
+            for axis in ("x","y"):
+                value=float("nan")
+                if previous and delta_t>0 and rec[f"{name}_valid"] and previous[f"{name}_valid"]:
+                    value=float(periodic_delta(rec[f"{name}_{axis}"],
+                                              previous[f"{name}_{axis}"],self.n)/delta_t)
+                rec[f"{name}_v{axis}"]=value
+        # Separation along the *green center's own travel direction*
+        # only exists if its velocity and both centers are well defined.
+        gv=np.array([rec["green_vx"],rec["green_vy"]],float)
+        delta=np.array([rec["offset_x"],rec["offset_y"]],float)
+        speed=np.linalg.norm(gv)
+        rec["offset_along_green_motion"]=float(np.dot(delta,gv)/speed) if (
+            np.all(np.isfinite(gv)) and np.all(np.isfinite(delta)) and speed>1e-6) else float("nan")
         self.rows.append(rec)
         return rec
 
