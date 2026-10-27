@@ -196,6 +196,8 @@ def run_live(*,n=128,nw=7,caps=6,steps_per_frame=10,
         dx=np.array([r["offset_x"] for r in tracker.rows])
         axs[1].plot(t,dx,"m",label="signed focus minus green X")
         axs[1].plot(t,distance,"k",alpha=.6,label="periodic 2D distance")
+        axs[1].plot(t,[z["offset_along_green_motion"] for z in tracker.rows],
+                    color="tab:blue",alpha=.75,label="along green velocity")
         axs[1].axhline(0,color="gray",lw=.5)
         axs[1].set_title("Separation and centroid crossings")
         axs[1].set_xlabel("Simulation time")
