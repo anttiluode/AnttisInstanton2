@@ -63,7 +63,7 @@ def lag_correlations(a,b,limit=12,min_pairs=12):
             aa,bb=av,bv
         good=np.isfinite(aa)&np.isfinite(bb)
         n=int(good.sum())
-        r=float("nan")
+        r=None
         if n>=min_pairs and np.std(aa[good])>1e-12 and np.std(bb[good])>1e-12:
             r=float(np.corrcoef(aa[good],bb[good])[0,1])
         result.append(dict(lag=lag,correlation=r,pairs=n))
@@ -71,7 +71,7 @@ def lag_correlations(a,b,limit=12,min_pairs=12):
 
 
 def best_lag(rows):
-    good=[r for r in rows if np.isfinite(r["correlation"])]
+    good=[r for r in rows if r["correlation"] is not None and np.isfinite(r["correlation"])]
     return max(good,key=lambda r:abs(r["correlation"])) if good else None
 
 
